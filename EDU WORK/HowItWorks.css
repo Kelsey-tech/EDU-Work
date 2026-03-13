@@ -1,0 +1,46 @@
+body{
+margin:0;
+font-family:'DM Sans',sans-serif;
+background:#FAFAFA;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:white;
+border-bottom:1px solid #E8E8E8;
+}
+
+.nav-links a{
+margin:0 15px;
+text-decoration:none;
+color:#6C47FF;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:80px 20px;
+text-align:center;
+}
+
+h1{
+font-family:'Syne',sans-serif;
+font-size:56px;
+margin-bottom:60px;
+}
+
+.steps{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:30px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:8px;
+border:1px solid #E8E8E8;
+}

@@ -1,0 +1,52 @@
+body{
+margin:0;
+font-family:'DM Sans',sans-serif;
+background:#FAFAFA;
+color:#111;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:white;
+border-bottom:1px solid #E8E8E8;
+}
+
+.logo{
+font-weight:700;
+font-size:18px;
+}
+
+.nav-links a{
+margin:0 15px;
+text-decoration:none;
+color:#6C47FF;
+font-weight:500;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:80px 20px;
+}
+
+h1{
+font-family:'Syne',sans-serif;
+font-size:56px;
+}
+
+.intro{
+color:#666;
+margin-bottom:40px;
+font-size:18px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:8px;
+border:1px solid #E8E8E8;
+margin-top:20px;
+}
