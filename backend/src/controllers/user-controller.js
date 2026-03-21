@@ -1,26 +1,35 @@
-const User = require('../models/user-model');
+const userService = require('../services/user-service');
 
 // ─── @route  GET /api/users ───────────────────────────────────────────────────
 // ─── @access Private/Admin ───────────────────────────────────────────────────
 const getAllUsers = async (req, res) => {
   try {
-    const pageSize = parseInt(process.env.DEFAULT_PAGE_SIZE) || 10;
-    const page = parseInt(req.query.page) || 1;
-
-    const totalUsers = await User.countDocuments();
-    const users = await User.find()
-      .select('-passwordHash')
-      .skip((page - 1) * pageSize)
-      .limit(pageSize);
-
-    res.status(200).json({
-      totalUsers,
-      page,
-      totalPages: Math.ceil(totalUsers / pageSize),
-      users,
-    });
+    const result = await userService.getAllUsers({ page: req.query.page });
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Could not retrieve users.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
+  }
+};
+
+// ─── @route  GET /api/users/students ─────────────────────────────────────────
+// ─── @access Private/Admin or Company ────────────────────────────────────────
+const getAllStudents = async (req, res) => {
+  try {
+    const result = await userService.getAllStudents({ page: req.query.page });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
+  }
+};
+
+// ─── @route  GET /api/users/companies ────────────────────────────────────────
+// ─── @access Private/Admin ───────────────────────────────────────────────────
+const getAllCompanies = async (req, res) => {
+  try {
+    const result = await userService.getAllCompanies({ page: req.query.page });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -28,49 +37,21 @@ const getAllUsers = async (req, res) => {
 // ─── @access Private ─────────────────────────────────────────────────────────
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId).select('-passwordHash');
-    if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
+    const user = await userService.getUserById(req.params.userId);
     res.status(200).json({ user });
   } catch (error) {
-    res.status(500).json({ message: 'Could not retrieve user.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
 // ─── @route  PUT /api/users/:userId ──────────────────────────────────────────
-// ─── @access Private (own profile or admin) ──────────────────────────────────
+// ─── @access Private ─────────────────────────────────────────────────────────
 const updateUser = async (req, res) => {
   try {
-    const isOwnProfile = req.user._id.toString() === req.params.userId;
-    const canEdit = isOwnProfile || req.user.role === 'admin';
-
-    if (!canEdit) {
-      return res.status(403).json({ message: 'You are not allowed to update this profile.' });
-    }
-
-    const allowedFields = ['firstName', 'lastName', 'studentProfile', 'companyProfile'];
-    const updates = {};
-
-    allowedFields.forEach((field) => {
-      if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
-      }
-    });
-
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.userId,
-      { $set: updates },
-      { new: true, runValidators: true }
-    ).select('-passwordHash');
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-
+    const updatedUser = await userService.updateUser(req.params.userId, req.user, req.body);
     res.status(200).json({ message: 'Profile updated successfully.', user: updatedUser });
   } catch (error) {
-    res.status(500).json({ message: 'Could not update user.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -78,14 +59,11 @@ const updateUser = async (req, res) => {
 // ─── @access Private/Admin ───────────────────────────────────────────────────
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-    res.status(200).json({ message: 'User deleted successfully.' });
+    const result = await userService.deleteUser(req.params.userId);
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Could not delete user.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
-module.exports = { getAllUsers, getUserById, updateUser, deleteUser };
+module.exports = { getAllUsers, getAllStudents, getAllCompanies, getUserById, updateUser, deleteUser };

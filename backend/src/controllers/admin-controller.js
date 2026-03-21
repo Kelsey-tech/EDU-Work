@@ -1,17 +1,8 @@
-const User = require('../models/user-model');
-const Job = require('../models/job-model');
-const Application = require('../models/application-model');
-const { successResponse, errorResponse } = require('../utils/api-response');
+const express = require('express');
+const router = express.Router();
+const { protect, authorise } = require('../middlewares/auth-middleware');
+const { dashboardSummary } = require('../controllers/admin-controller');
 
-// ADMIN DASHBOARD SUMMARY
-exports.dashboardSummary = async (req, res) => {
-  try {
-    const usersCount = await User.countDocuments();
-    const jobsCount = await Job.countDocuments();
-    const applicationsCount = await Application.countDocuments();
+router.get('/dashboard', protect, authorise('admin'), dashboardSummary);
 
-    successResponse(res, { usersCount, jobsCount, applicationsCount }, 'Admin dashboard summary');
-  } catch (err) {
-    errorResponse(res, err.message);
-  }
-};
+module.exports = router;

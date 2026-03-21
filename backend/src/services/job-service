@@ -1,5 +1,0 @@
-const Job = require('../models/job-model');
-
-exports.createJob = (data) => Job.create(data);
-exports.getJobs = () => Job.find();
-exports.getJob = (id) => Job.findById(id);

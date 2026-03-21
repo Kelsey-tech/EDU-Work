@@ -3,6 +3,7 @@ const User = require('../models/user-model');
 
 // ─── Verify JWT token ─────────────────────────────────────────────────────────
 const protect = async (req, res, next) => {
+  console.log('AUTH HEADER:', req.headers.authorization); // ADD THIS
   let token;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {

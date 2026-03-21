@@ -1,30 +1,13 @@
-const Job = require('../models/job-model');
+const jobService = require('../services/job-service');
 
 // ─── @route  POST /api/jobs ───────────────────────────────────────────────────
 // ─── @access Private/Company ─────────────────────────────────────────────────
 const createJobPost = async (req, res) => {
   try {
-    const { title, description, location, jobType, requirements, salary, applicationDeadline } =
-      req.body;
-
-    if (!title || !description || !jobType) {
-      return res.status(400).json({ message: 'Title, description, and job type are required.' });
-    }
-
-    const job = await Job.create({
-      title,
-      description,
-      companyId: req.user._id,
-      location,
-      jobType,
-      requirements,
-      salary,
-      applicationDeadline,
-    });
-
+    const job = await jobService.createJobPost(req.user._id, req.body);
     res.status(201).json({ message: 'Job posted successfully.', job });
   } catch (error) {
-    res.status(500).json({ message: 'Could not create job post.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -32,30 +15,10 @@ const createJobPost = async (req, res) => {
 // ─── @access Public ───────────────────────────────────────────────────────────
 const getAllJobs = async (req, res) => {
   try {
-    const pageSize = parseInt(process.env.DEFAULT_PAGE_SIZE) || 10;
-    const page = parseInt(req.query.page) || 1;
-    const { jobType, location, search } = req.query;
-
-    const filter = { status: 'open' };
-    if (jobType) filter.jobType = jobType;
-    if (location) filter.location = new RegExp(location, 'i');
-    if (search) filter.$text = { $search: search };
-
-    const totalJobs = await Job.countDocuments(filter);
-    const jobs = await Job.find(filter)
-      .populate('companyId', 'firstName lastName companyProfile.companyName')
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .sort({ createdAt: -1 });
-
-    res.status(200).json({
-      totalJobs,
-      page,
-      totalPages: Math.ceil(totalJobs / pageSize),
-      jobs,
-    });
+    const result = await jobService.getAllJobs(req.query);
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Could not retrieve jobs.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -63,42 +26,21 @@ const getAllJobs = async (req, res) => {
 // ─── @access Public ───────────────────────────────────────────────────────────
 const getJobById = async (req, res) => {
   try {
-    const job = await Job.findById(req.params.jobId).populate(
-      'companyId',
-      'firstName lastName companyProfile'
-    );
-
-    if (!job) {
-      return res.status(404).json({ message: 'Job not found.' });
-    }
-
+    const job = await jobService.getJobById(req.params.jobId);
     res.status(200).json({ job });
   } catch (error) {
-    res.status(500).json({ message: 'Could not retrieve job.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
 // ─── @route  PUT /api/jobs/:jobId ────────────────────────────────────────────
-// ─── @access Private/Company (own posting only) ───────────────────────────────
+// ─── @access Private/Company ─────────────────────────────────────────────────
 const updateJobPost = async (req, res) => {
   try {
-    const job = await Job.findById(req.params.jobId);
-    if (!job) return res.status(404).json({ message: 'Job not found.' });
-
-    const isOwner = job.companyId.toString() === req.user._id.toString();
-    if (!isOwner && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'You are not allowed to edit this job post.' });
-    }
-
-    const updatedJob = await Job.findByIdAndUpdate(
-      req.params.jobId,
-      { $set: req.body },
-      { new: true, runValidators: true }
-    );
-
-    res.status(200).json({ message: 'Job updated successfully.', job: updatedJob });
+    const job = await jobService.updateJobPost(req.params.jobId, req.user, req.body);
+    res.status(200).json({ message: 'Job updated successfully.', job });
   } catch (error) {
-    res.status(500).json({ message: 'Could not update job.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -106,37 +48,33 @@ const updateJobPost = async (req, res) => {
 // ─── @access Private/Company or Admin ────────────────────────────────────────
 const deleteJobPost = async (req, res) => {
   try {
-    const job = await Job.findById(req.params.jobId);
-    if (!job) return res.status(404).json({ message: 'Job not found.' });
-
-    const isOwner = job.companyId.toString() === req.user._id.toString();
-    if (!isOwner && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'You are not allowed to delete this job post.' });
-    }
-
-    await job.deleteOne();
-    res.status(200).json({ message: 'Job deleted successfully.' });
+    const result = await jobService.deleteJobPost(req.params.jobId, req.user);
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Could not delete job.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
-// ─── @route  GET /api/jobs/company/my-jobs ────────────────────────────────────
+// ─── @route  GET /api/jobs/company/my-jobs ───────────────────────────────────
 // ─── @access Private/Company ─────────────────────────────────────────────────
 const getCompanyJobs = async (req, res) => {
   try {
-    const jobs = await Job.find({ companyId: req.user._id }).sort({ createdAt: -1 });
-    res.status(200).json({ totalJobs: jobs.length, jobs });
+    const result = await jobService.getCompanyJobs(req.user._id);
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Could not retrieve company jobs.', error: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
-module.exports = {
-  createJobPost,
-  getAllJobs,
-  getJobById,
-  updateJobPost,
-  deleteJobPost,
-  getCompanyJobs,
+// ─── @route  PUT /api/jobs/:jobId/close ──────────────────────────────────────
+// ─── @access Private/Company ─────────────────────────────────────────────────
+const closeJobPost = async (req, res) => {
+  try {
+    const job = await jobService.closeJobPost(req.params.jobId, req.user);
+    res.status(200).json({ message: 'Job closed successfully.', job });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
+  }
 };
+
+module.exports = { createJobPost, getAllJobs, getJobById, updateJobPost, deleteJobPost, getCompanyJobs, closeJobPost };
