@@ -28,7 +28,7 @@
 
         <div class="nav-btns">
                 <a href="Login.html">Login</a>
-                <a href="/" class="btn getStarted-btn">Get Started</a>
+                <a href="Login.html" class="btn getStarted-btn">Get Started</a>
         </div>
 
         <button class="hamburger" id="hamburger">
@@ -53,8 +53,8 @@
       </p>
 
       <div class="hero-btns">
-        <a href="/register" class="btn getStarted-btn">Get Started</a>
-        <a href="#how-it-works" class="btn login-btn">See How It Works</a>
+        <a href="Login.html" class="btn getStarted-btn">Get Started</a>
+        <a href="HowItWorks.html" class="btn login-btn">See How It Works</a>
       </div>
 
     </div>
@@ -87,16 +87,17 @@
 </main>
 
     <script src="./script.js"></script>
-<script src="./api.js"></script>
-<script>
-  const _user = getUser();
-  if (_user) {
-    let dash = _user.role==='student'?'StudentDashboard.html':_user.role==='company'?'CompanyDashboard.html':'AdminDashboard.html';
-    const nb = document.querySelector('.nav-btns');
-    if(nb) nb.innerHTML = `<a href="${dash}" class="btn login-btn">Dashboard</a><button onclick="logout()" class="btn getStarted-btn" style="border:none;cursor:pointer;">Logout</button>`;
-    const hb = document.querySelector('.hero-btns');
-    if(hb) hb.innerHTML = `<a href="${dash}" class="btn getStarted-btn">Go to Dashboard</a>`;
-  }
-</script>
+    <script src="./api.js"></script>
+    <script>
+      // Update nav if logged in
+      const _user = getUser();
+      if (_user) {
+        let dash = _user.role==='student'?'StudentDashboard.html':_user.role==='company'?'CompanyDashboard.html':'AdminDashboard.html';
+        const nb = document.querySelector('.nav-btns');
+        if(nb) nb.innerHTML = `<a href="${dash}" class="btn login-btn">Dashboard</a><button onclick="logout()" class="btn getStarted-btn" style="border:none;cursor:pointer;">Logout</button>`;
+        const hb = document.querySelector('.hero-btns');
+        if(hb) hb.innerHTML = `<a href="${dash}" class="btn getStarted-btn">Go to Dashboard</a>`;
+      }
+    </script>
 </body>
 </html>
