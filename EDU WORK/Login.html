@@ -1,58 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login | EDU Work</title>
-
 <link rel="stylesheet" href="Login.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<style>
+  .tabs { display:flex; gap:0; margin-bottom:28px; border-radius:8px; overflow:hidden; border:1px solid #E8E8E8; }
+  .tab-btn { flex:1; padding:12px; background:#fff; border:none; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; color:#888; transition:all 0.2s; }
+  .tab-btn.active { background:#6C47FF; color:#fff; }
+  .tab-content { display:none; flex-direction:column; }
+  .tab-content.active { display:flex; }
+  .error-msg { color:#e53e3e; font-size:13px; margin-top:-12px; margin-bottom:12px; display:none; }
+  .role-select { padding:12px; margin-bottom:20px; border-radius:6px; border:1px solid #E8E8E8; font-size:14px; font-family:'DM Sans',sans-serif; }
+  .role-select:focus { outline:none; border:1px solid #6C47FF; }
+  .name-row { display:flex; gap:12px; }
+  .name-row > div { flex:1; display:flex; flex-direction:column; }
+  button:disabled { opacity:0.6; cursor:not-allowed; }
+</style>
 </head>
-
 <body>
-
 <nav>
-
-<div class="logo">EDU Work</div>
-
-<div class="nav-links">
-<a href="index.html">Home</a>
-<a href="About.html">About</a>
-<a href="HowItWorks.html">How it Works</a>
-<a href="Jobs.html">Jobs</a>
-</div>
-
+  <div class="logo"><a href="index.html" style="text-decoration:none;color:inherit;">EDU Work</a></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="About.html">About</a>
+    <a href="HowItWorks.html">How it Works</a>
+    <a href="Jobs.html">Jobs</a>
+  </div>
 </nav>
-
 <section class="login-container">
-
-<div class="login-box">
-
-<h1>Login</h1>
-
-<p class="subtitle">Access your EDU-WORK account</p>
-
-<form>
-
-<label>Email</label>
-<input type="email" placeholder="Enter your email">
-
-<label>Password</label>
-<input type="password" placeholder="Enter your password">
-
-<button type="submit">Login</button>
-
-</form>
-
-<p class="signup-text">
-Don't have an account? <a href="#">Register</a>
-</p>
-
-</div>
-
+  <div class="login-box">
+    <h1>EDU Work</h1>
+    <p class="subtitle">Your career starts here</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+      <button class="tab-btn" onclick="switchTab('register')">Register</button>
+    </div>
+    <!-- LOGIN -->
+    <div class="tab-content active" id="tab-login">
+      <div id="login-error" class="error-msg"></div>
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="Enter your email">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="Enter your password">
+      <button id="login-btn" onclick="handleLogin()">Login</button>
+      <p class="signup-text" style="margin-top:16px;">Don't have an account? <a href="#" onclick="switchTab('register')">Register</a></p>
+    </div>
+    <!-- REGISTER -->
+    <div class="tab-content" id="tab-register">
+      <div id="register-error" class="error-msg"></div>
+      <div class="name-row">
+        <div><label>First Name</label><input type="text" id="reg-firstname" placeholder="First name"></div>
+        <div><label>Last Name</label><input type="text" id="reg-lastname" placeholder="Last name"></div>
+      </div>
+      <label>Email</label>
+      <input type="email" id="reg-email" placeholder="Enter your email">
+      <label>Password</label>
+      <input type="password" id="reg-password" placeholder="Create a password">
+      <label>I am a...</label>
+      <select id="reg-role" class="role-select">
+        <option value="student">Student</option>
+        <option value="company">Company / Employer</option>
+      </select>
+      <button id="register-btn" onclick="handleRegister()">Create Account</button>
+      <p class="signup-text" style="margin-top:16px;">Already have an account? <a href="#" onclick="switchTab('login')">Login</a></p>
+    </div>
+  </div>
 </section>
-
+<script src="api.js"></script>
+<script>
+  if (isLoggedIn()) redirectByRole(getUser());
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+    document.getElementById('tab-login').classList.toggle('active', tab==='login');
+    document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  }
+  function showError(id, msg) { const el=document.getElementById(id); el.textContent=msg; el.style.display='block'; }
+  function hideError(id) { document.getElementById(id).style.display='none'; }
+  function redirectByRole(user) {
+    if (user.role==='student') window.location.href='StudentDashboard.html';
+    else if (user.role==='company') window.location.href='CompanyDashboard.html';
+    else if (user.role==='admin') window.location.href='AdminDashboard.html';
+    else window.location.href='index.html';
+  }
+  async function handleLogin() {
+    hideError('login-error');
+    const email=document.getElementById('login-email').value.trim();
+    const password=document.getElementById('login-password').value;
+    if (!email||!password) return showError('login-error','Please fill in all fields.');
+    const btn=document.getElementById('login-btn');
+    btn.disabled=true; btn.textContent='Logging in...';
+    try { const data=await auth.login(email,password); redirectByRole(data.user); }
+    catch(e) { showError('login-error',e.message); btn.disabled=false; btn.textContent='Login'; }
+  }
+  async function handleRegister() {
+    hideError('register-error');
+    const firstName=document.getElementById('reg-firstname').value.trim();
+    const lastName=document.getElementById('reg-lastname').value.trim();
+    const email=document.getElementById('reg-email').value.trim();
+    const password=document.getElementById('reg-password').value;
+    const role=document.getElementById('reg-role').value;
+    if (!firstName||!lastName||!email||!password) return showError('register-error','Please fill in all fields.');
+    const btn=document.getElementById('register-btn');
+    btn.disabled=true; btn.textContent='Creating account...';
+    try { const data=await auth.register(firstName,lastName,email,password,role); redirectByRole(data.user); }
+    catch(e) { showError('register-error',e.message); btn.disabled=false; btn.textContent='Create Account'; }
+  }
+  document.addEventListener('keydown',e=>{ if(e.key==='Enter'){ const t=document.querySelector('.tab-content.active').id; if(t==='tab-login') handleLogin(); else handleRegister(); }});
+</script>
 </body>
 </html>

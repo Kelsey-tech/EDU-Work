@@ -87,5 +87,16 @@
 </main>
 
     <script src="./script.js"></script>
+<script src="./api.js"></script>
+<script>
+  const _user = getUser();
+  if (_user) {
+    let dash = _user.role==='student'?'StudentDashboard.html':_user.role==='company'?'CompanyDashboard.html':'AdminDashboard.html';
+    const nb = document.querySelector('.nav-btns');
+    if(nb) nb.innerHTML = `<a href="${dash}" class="btn login-btn">Dashboard</a><button onclick="logout()" class="btn getStarted-btn" style="border:none;cursor:pointer;">Logout</button>`;
+    const hb = document.querySelector('.hero-btns');
+    if(hb) hb.innerHTML = `<a href="${dash}" class="btn getStarted-btn">Go to Dashboard</a>`;
+  }
+</script>
 </body>
 </html>

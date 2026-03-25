@@ -1,58 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jobs | EDU Work</title>
-
 <link rel="stylesheet" href="Jobs.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<style>
+  .filters { display:flex; gap:12px; margin-bottom:36px; flex-wrap:wrap; }
+  .filters select, .filters input { padding:10px 14px; border-radius:6px; border:1px solid #E8E8E8; font-family:'DM Sans',sans-serif; font-size:14px; }
+  .filters select:focus, .filters input:focus { outline:none; border-color:#6C47FF; }
+  .filter-btn { padding:10px 20px; background:#6C47FF; color:#fff; border:none; border-radius:6px; font-family:'DM Sans',sans-serif; font-weight:600; cursor:pointer; }
+  .filter-btn:hover { background:#4F2FD4; }
+  .card h3 { color:#111; margin-bottom:6px; }
+  .card p { color:#666; font-size:14px; margin-bottom:4px; }
+  .card .salary { font-weight:600; color:#6C47FF; font-size:14px; margin-top:8px; }
+  .apply-btn { margin-top:14px; width:100%; padding:10px; background:#6C47FF; color:#fff; border:none; border-radius:6px; font-family:'DM Sans',sans-serif; font-weight:600; cursor:pointer; font-size:14px; }
+  .apply-btn:hover { background:#4F2FD4; }
+  .apply-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .loading { text-align:center; padding:60px; color:#888; }
+  .empty { text-align:center; padding:60px; color:#888; }
+  /* Modal */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:#fff; border-radius:12px; padding:36px; width:90%; max-width:480px; }
+  .modal h2 { font-family:'Syne',sans-serif; margin-bottom:8px; }
+  .modal p { color:#666; font-size:14px; margin-bottom:20px; }
+  .modal textarea { width:100%; padding:12px; border-radius:6px; border:1px solid #E8E8E8; font-family:'DM Sans',sans-serif; font-size:14px; resize:vertical; min-height:120px; box-sizing:border-box; }
+  .modal textarea:focus { outline:none; border-color:#6C47FF; }
+  .modal-btns { display:flex; gap:12px; margin-top:16px; }
+  .modal-btns button { flex:1; padding:11px; border-radius:6px; font-family:'DM Sans',sans-serif; font-weight:600; cursor:pointer; font-size:14px; }
+  .btn-cancel { background:#fff; border:1px solid #E8E8E8; color:#666; }
+  .btn-submit { background:#6C47FF; color:#fff; border:none; }
+  .btn-submit:hover { background:#4F2FD4; }
+  .error-msg { color:#e53e3e; font-size:13px; margin-top:8px; display:none; }
+  .success-banner { background:#F0FFF4; border:1px solid #68D391; color:#276749; padding:12px 16px; border-radius:6px; margin-bottom:20px; display:none; font-size:14px; }
+</style>
 </head>
-
 <body>
-
 <nav>
-
-<div class="logo">EDU Work</div>
-
-<div class="nav-links">
-<a href="index.html">Home</a>
-<a href="About.html">About</a>
-<a href="HowItWorks.html">How it Works</a>
-<a href="Jobs.html">Jobs</a>
-</div>
-
+  <div class="logo"><a href="index.html" style="text-decoration:none;color:inherit;">EDU Work</a></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="About.html">About</a>
+    <a href="HowItWorks.html">How it Works</a>
+    <a href="Jobs.html">Jobs</a>
+  </div>
+  <div class="nav-btns" id="nav-btns"></div>
 </nav>
-
 <section class="container">
-
-<h1>Browse Jobs</h1>
-
-<div class="jobs">
-
-<div class="card">
-<h3>Frontend Developer Intern</h3>
-<p>TechCorp · Remote</p>
-<span class="tag">Internship</span>
-</div>
-
-<div class="card">
-<h3>Data Analyst Intern</h3>
-<p>DataLabs · Johannesburg</p>
-<span class="tag">Internship</span>
-</div>
-
-<div class="card">
-<h3>Junior Software Developer</h3>
-<p>InnovateX · Cape Town</p>
-<span class="tag">Entry Level</span>
-</div>
-
-</div>
-
+  <h1>Browse Jobs</h1>
+  <div id="success-banner" class="success-banner"></div>
+  <div class="filters">
+    <select id="filter-type">
+      <option value="">All Types</option>
+      <option value="internship">Internship</option>
+      <option value="entry-level">Entry Level</option>
+      <option value="part-time">Part Time</option>
+    </select>
+    <input type="text" id="filter-location" placeholder="Filter by location...">
+    <button class="filter-btn" onclick="loadJobs()">Search</button>
+    <button class="filter-btn" style="background:#fff;color:#6C47FF;border:1px solid #6C47FF;" onclick="clearFilters()">Clear</button>
+  </div>
+  <div id="jobs-grid" class="jobs"><div class="loading">Loading jobs...</div></div>
 </section>
 
+<!-- Apply Modal -->
+<div class="modal-overlay" id="apply-modal">
+  <div class="modal">
+    <h2 id="modal-job-title">Apply for Job</h2>
+    <p id="modal-job-company"></p>
+    <label style="font-weight:500;font-size:14px;">Cover Letter</label>
+    <textarea id="cover-letter" placeholder="Tell the company why you're a great fit..."></textarea>
+    <div id="apply-error" class="error-msg"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" id="submit-apply-btn" onclick="submitApplication()">Submit Application</button>
+    </div>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script>
+  let currentJobId = null;
+
+  // Update nav
+  const user = getUser();
+  const navBtns = document.getElementById('nav-btns');
+  if (user) {
+    let dash = user.role==='student'?'StudentDashboard.html':user.role==='company'?'CompanyDashboard.html':'AdminDashboard.html';
+    navBtns.innerHTML = `<a href="${dash}" class="btn login-btn" style="padding:8px 16px;border:1px solid #6C47FF;border-radius:6px;color:#6C47FF;font-weight:600;">Dashboard</a>`;
+  } else {
+    navBtns.innerHTML = `<a href="Login.html" style="color:#6C47FF;font-weight:500;">Login</a> <a href="Login.html" class="btn getStarted-btn" style="padding:8px 18px;background:#6C47FF;color:#fff;border-radius:6px;font-weight:600;">Get Started</a>`;
+  }
+
+  async function loadJobs() {
+    const type = document.getElementById('filter-type').value;
+    const location = document.getElementById('filter-location').value.trim();
+    const params = {};
+    if (type) params.jobType = type;
+    if (location) params.location = location;
+
+    document.getElementById('jobs-grid').innerHTML = '<div class="loading">Loading jobs...</div>';
+    try {
+      const data = await jobs.getAll(params);
+      renderJobs(data.jobs || []);
+    } catch(e) {
+      document.getElementById('jobs-grid').innerHTML = `<div class="empty">Could not load jobs: ${e.message}</div>`;
+    }
+  }
+
+  function clearFilters() {
+    document.getElementById('filter-type').value = '';
+    document.getElementById('filter-location').value = '';
+    loadJobs();
+  }
+
+  function renderJobs(jobList) {
+    const grid = document.getElementById('jobs-grid');
+    if (!jobList.length) { grid.innerHTML = '<div class="empty">No jobs found.</div>'; return; }
+    grid.innerHTML = jobList.map(job => `
+      <div class="card">
+        <h3>${job.title}</h3>
+        <p>${job.companyId?.firstName ? job.companyId.firstName + ' ' + job.companyId.lastName : 'Company'} &middot; ${job.location}</p>
+        <p style="margin-top:8px;font-size:13px;color:#888;">${job.description}</p>
+        ${job.requirements?.length ? `<p style="margin-top:8px;font-size:12px;color:#aaa;">${job.requirements.join(' · ')}</p>` : ''}
+        <p class="salary">${job.salary || ''}</p>
+        <span class="tag">${job.jobType}</span>
+        ${user && user.role === 'student' ? `<button class="apply-btn" onclick="openApply('${job._id}','${job.title}','${job.companyId?.firstName || ''}')">Apply Now</button>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function openApply(jobId, title, company) {
+    if (!isLoggedIn()) { window.location.href = 'Login.html'; return; }
+    currentJobId = jobId;
+    document.getElementById('modal-job-title').textContent = title;
+    document.getElementById('modal-job-company').textContent = company;
+    document.getElementById('cover-letter').value = '';
+    document.getElementById('apply-error').style.display = 'none';
+    document.getElementById('apply-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('apply-modal').classList.remove('open');
+    currentJobId = null;
+  }
+
+  async function submitApplication() {
+    const coverLetter = document.getElementById('cover-letter').value.trim();
+    const errEl = document.getElementById('apply-error');
+    errEl.style.display = 'none';
+    if (!coverLetter) { errEl.textContent = 'Please write a cover letter.'; errEl.style.display = 'block'; return; }
+
+    const btn = document.getElementById('submit-apply-btn');
+    btn.disabled = true; btn.textContent = 'Submitting...';
+    try {
+      await applications.apply(currentJobId, coverLetter);
+      closeModal();
+      const banner = document.getElementById('success-banner');
+      banner.textContent = 'Application submitted successfully!';
+      banner.style.display = 'block';
+      setTimeout(() => banner.style.display = 'none', 4000);
+    } catch(e) {
+      errEl.textContent = e.message; errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Submit Application';
+    }
+  }
+
+  // Close modal on overlay click
+  document.getElementById('apply-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  loadJobs();
+</script>
 </body>
 </html>

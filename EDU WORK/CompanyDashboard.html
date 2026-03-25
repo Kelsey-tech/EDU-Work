@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Dashboard | EDU Work</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#FAFAFA;color:#333;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:#fff;border-bottom:1px solid #E8E8E8;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#111;}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-user{font-size:14px;color:#666;}
+.logout-btn{padding:8px 16px;background:#fff;border:1px solid #E8E8E8;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;color:#666;}
+.logout-btn:hover{border-color:#6C47FF;color:#6C47FF;}
+.layout{display:flex;margin-top:64px;min-height:calc(100vh - 64px);}
+.sidebar{width:220px;background:#fff;border-right:1px solid #E8E8E8;padding:24px 0;position:fixed;top:64px;bottom:0;}
+.sidebar-item{display:block;padding:12px 24px;color:#666;text-decoration:none;font-size:14px;font-weight:500;transition:all 0.2s;border-left:3px solid transparent;cursor:pointer;}
+.sidebar-item:hover,.sidebar-item.active{background:#F5F3FF;color:#6C47FF;border-left-color:#6C47FF;}
+.main{margin-left:220px;padding:36px;flex:1;}
+.page{display:none;}
+.page.active{display:block;}
+h2{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:#111;margin-bottom:24px;}
+.card{background:#fff;border:1px solid #E8E8E8;border-radius:12px;padding:24px;margin-bottom:16px;}
+.card h3{font-size:16px;font-weight:600;color:#111;margin-bottom:6px;}
+.card .meta{font-size:13px;color:#888;margin-bottom:10px;}
+.tag{background:#EDE9FF;color:#6C47FF;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;}
+.tag-closed{background:#F1F5F9;color:#64748B;}
+.card-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.action-btn{padding:7px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+.btn-view{background:#F5F3FF;color:#6C47FF;}
+.btn-edit{background:#EFF6FF;color:#1D4ED8;}
+.btn-close{background:#FFF7ED;color:#C2410C;}
+.btn-close:disabled{opacity:0.4;cursor:not-allowed;}
+.post-btn{padding:11px 22px;background:#6C47FF;color:#fff;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;margin-bottom:28px;}
+.post-btn:hover{background:#4F2FD4;}
+/* form */
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-weight:500;font-size:14px;margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 13px;border-radius:6px;border:1px solid #E8E8E8;font-family:'DM Sans',sans-serif;font-size:14px;box-sizing:border-box;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#6C47FF;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.submit-btn{padding:11px 24px;background:#6C47FF;color:#fff;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;}
+.submit-btn:hover{background:#4F2FD4;}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+/* applicants */
+.applicant-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid #F0F0F0;}
+.applicant-row:last-child{border-bottom:none;}
+.applicant-info h4{font-size:14px;font-weight:600;color:#111;}
+.applicant-info p{font-size:12px;color:#888;margin-top:2px;}
+.applicant-actions{display:flex;gap:8px;}
+.btn-accept{padding:6px 14px;background:#F0FFF4;color:#166534;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;}
+.btn-accept:hover{background:#dcfce7;}
+.btn-reject{padding:6px 14px;background:#FFF1F2;color:#9F1239;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;}
+.btn-reject:hover{background:#ffe4e6;}
+.status-badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+.status-pending{background:#FEFCE8;color:#854D0E;}
+.status-accepted{background:#F0FFF4;color:#166534;}
+.status-rejected{background:#FFF1F2;color:#9F1239;}
+.back-link{color:#6C47FF;font-size:14px;cursor:pointer;margin-bottom:20px;display:inline-block;font-weight:500;}
+.err{color:#e53e3e;font-size:13px;margin-top:8px;display:none;}
+.success-banner{background:#F0FFF4;border:1px solid #68D391;color:#276749;padding:12px 16px;border-radius:6px;margin-bottom:20px;display:none;font-size:14px;}
+.loading{text-align:center;padding:40px;color:#888;}
+.req-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.req-tag{background:#EDE9FF;color:#6C47FF;padding:3px 10px;border-radius:20px;font-size:12px;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">EDU Work</div>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-user"></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="sidebar-item active" onclick="showPage('myjobs',this)" href="#">My Jobs</a>
+    <a class="sidebar-item" onclick="showPage('postjob',this)" href="#">Post a Job</a>
+  </aside>
+  <main class="main">
+    <div id="success-banner" class="success-banner"></div>
+
+    <!-- MY JOBS -->
+    <div class="page active" id="page-myjobs">
+      <h2>My Job Listings</h2>
+      <div id="myjobs-list"><div class="loading">Loading...</div></div>
+    </div>
+
+    <!-- APPLICANTS VIEW -->
+    <div class="page" id="page-applicants">
+      <a class="back-link" onclick="showPage('myjobs',null)">&#8592; Back to My Jobs</a>
+      <h2 id="applicants-title">Applicants</h2>
+      <div id="applicants-list"><div class="loading">Loading...</div></div>
+    </div>
+
+    <!-- EDIT JOB -->
+    <div class="page" id="page-editjob">
+      <a class="back-link" onclick="showPage('myjobs',null)">&#8592; Back to My Jobs</a>
+      <h2>Edit Job</h2>
+      <div id="edit-err" class="err"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Job Title</label><input type="text" id="edit-title"></div>
+        <div class="form-group"><label>Location</label><input type="text" id="edit-location"></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea id="edit-desc" rows="3"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Job Type</label>
+          <select id="edit-type"><option value="internship">Internship</option><option value="entry-level">Entry Level</option><option value="part-time">Part Time</option><option value="full-time">Full Time</option></select>
+        </div>
+        <div class="form-group"><label>Salary</label><input type="text" id="edit-salary" placeholder="e.g. R5000/month"></div>
+      </div>
+      <div class="form-group"><label>Requirements (comma-separated)</label><input type="text" id="edit-requirements" placeholder="JavaScript, React, Node.js"></div>
+      <button class="submit-btn" id="edit-save-btn" onclick="saveEdit()">Save Changes</button>
+    </div>
+
+    <!-- POST JOB -->
+    <div class="page" id="page-postjob">
+      <h2>Post a New Job</h2>
+      <div id="post-err" class="err"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Job Title</label><input type="text" id="post-title" placeholder="e.g. Junior Developer Intern"></div>
+        <div class="form-group"><label>Location</label><input type="text" id="post-location" placeholder="e.g. Johannesburg"></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea id="post-desc" rows="3" placeholder="Describe the role..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Job Type</label>
+          <select id="post-type"><option value="internship">Internship</option><option value="entry-level">Entry Level</option><option value="part-time">Part Time</option><option value="full-time">Full Time</option></select>
+        </div>
+        <div class="form-group"><label>Salary</label><input type="text" id="post-salary" placeholder="e.g. R5000/month"></div>
+      </div>
+      <div class="form-group"><label>Requirements (comma-separated)</label><input type="text" id="post-requirements" placeholder="JavaScript, React, Node.js"></div>
+      <button class="submit-btn" id="post-btn" onclick="postJob()">Post Job</button>
+    </div>
+  </main>
+</div>
+
+<script src="api.js"></script>
+<script>
+  const user = requireAuth(['company']);
+  if (user) document.getElementById('nav-user').textContent = user.firstName + ' ' + user.lastName;
+
+  let editingJobId = null;
+
+  function showPage(name, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    if (el) el.classList.add('active');
+    if (name === 'myjobs') loadMyJobs();
+  }
+
+  function showBanner(msg) {
+    const b = document.getElementById('success-banner');
+    b.textContent = msg; b.style.display='block';
+    setTimeout(()=>b.style.display='none', 4000);
+  }
+
+  async function loadMyJobs() {
+    document.getElementById('myjobs-list').innerHTML = '<div class="loading">Loading...</div>';
+    try {
+      const data = await jobs.getMyJobs();
+      renderMyJobs(data.jobs || []);
+    } catch(e) { document.getElementById('myjobs-list').innerHTML = `<p style="color:#e53e3e;padding:20px;">${e.message}</p>`; }
+  }
+
+  function renderMyJobs(list) {
+    const el = document.getElementById('myjobs-list');
+    if (!list.length) { el.innerHTML='<p style="color:#888;padding:20px;">No jobs posted yet.</p>'; return; }
+    el.innerHTML = list.map(j => `
+      <div class="card">
+        <h3>${j.title}</h3>
+        <p class="meta">${j.location} &middot; ${j.salary||''}</p>
+        ${j.requirements?.length ? `<div class="req-tags">${j.requirements.map(r=>`<span class="req-tag">${r}</span>`).join('')}</div>` : ''}
+        <div style="margin-top:10px;"><span class="tag ${j.status==='closed'?'tag-closed':''}">${j.jobType}</span> <span class="tag ${j.status==='closed'?'tag-closed':''}" style="margin-left:6px;">${j.status}</span></div>
+        <div class="card-actions">
+          <button class="action-btn btn-view" onclick="viewApplicants('${j._id}','${escAttr(j.title)}')">View Applicants</button>
+          <button class="action-btn btn-edit" onclick="editJob('${j._id}')">Edit</button>
+          <button class="action-btn btn-close" onclick="closeJob('${j._id}',this)" ${j.status==='closed'?'disabled':''}>Close Job</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function escAttr(s) { return s.replace(/'/g,"&#39;"); }
+
+  async function viewApplicants(jobId, title) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-applicants').classList.add('active');
+    document.getElementById('applicants-title').textContent = 'Applicants — ' + title;
+    document.getElementById('applicants-list').innerHTML = '<div class="loading">Loading...</div>';
+    try {
+      const data = await applications.getByJob(jobId);
+      renderApplicants(data.applications || []);
+    } catch(e) { document.getElementById('applicants-list').innerHTML = `<p style="color:#e53e3e;padding:20px;">${e.message}</p>`; }
+  }
+
+  function renderApplicants(list) {
+    const el = document.getElementById('applicants-list');
+    if (!list.length) { el.innerHTML='<p style="color:#888;padding:20px;">No applicants yet.</p>'; return; }
+    el.innerHTML = `<div class="card">${list.map(a => `
+      <div class="applicant-row">
+        <div class="applicant-info">
+          <h4>${a.studentId?.firstName||''} ${a.studentId?.lastName||''}</h4>
+          <p>${a.studentId?.email||''} &middot; Applied ${new Date(a.appliedAt).toLocaleDateString()}</p>
+          <p style="margin-top:6px;font-size:12px;color:#666;">${a.coverLetter}</p>
+        </div>
+        <div class="applicant-actions">
+          ${a.status==='pending' ? `
+            <button class="btn-accept" onclick="updateAppStatus('${a._id}','accepted',this)">Accept</button>
+            <button class="btn-reject" onclick="updateAppStatus('${a._id}','rejected',this)">Reject</button>
+          ` : `<span class="status-badge status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</span>`}
+        </div>
+      </div>`).join('')}</div>`;
+  }
+
+  async function updateAppStatus(appId, status, btn) {
+    btn.disabled = true;
+    try {
+      await applications.updateStatus(appId, status);
+      // Refresh applicant row
+      const row = btn.closest('.applicant-row').querySelector('.applicant-actions');
+      row.innerHTML = `<span class="status-badge status-${status}">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+      showBanner(`Application ${status}.`);
+    } catch(e) { alert(e.message); btn.disabled=false; }
+  }
+
+  function editJob(jobId) {
+    // Find job data from rendered list — re-fetch
+    loadJobForEdit(jobId);
+  }
+
+  async function loadJobForEdit(jobId) {
+    editingJobId = jobId;
+    try {
+      const data = await jobs.getMyJobs();
+      const job = (data.jobs||[]).find(j => j._id === jobId);
+      if (!job) return;
+      document.getElementById('edit-title').value = job.title;
+      document.getElementById('edit-location').value = job.location;
+      document.getElementById('edit-desc').value = job.description;
+      document.getElementById('edit-type').value = job.jobType;
+      document.getElementById('edit-salary').value = job.salary||'';
+      document.getElementById('edit-requirements').value = (job.requirements||[]).join(', ');
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById('page-editjob').classList.add('active');
+    } catch(e) { alert(e.message); }
+  }
+
+  async function saveEdit() {
+    const btn = document.getElementById('edit-save-btn');
+    btn.disabled=true; btn.textContent='Saving...';
+    const errEl = document.getElementById('edit-err'); errEl.style.display='none';
+    try {
+      const reqs = document.getElementById('edit-requirements').value.split(',').map(s=>s.trim()).filter(Boolean);
+      await jobs.update(editingJobId, {
+        title: document.getElementById('edit-title').value,
+        location: document.getElementById('edit-location').value,
+        description: document.getElementById('edit-desc').value,
+        jobType: document.getElementById('edit-type').value,
+        salary: document.getElementById('edit-salary').value,
+        requirements: reqs
+      });
+      showPage('myjobs', document.querySelector('.sidebar-item'));
+      showBanner('Job updated successfully.');
+    } catch(e) { errEl.textContent=e.message; errEl.style.display='block'; }
+    finally { btn.disabled=false; btn.textContent='Save Changes'; }
+  }
+
+  async function closeJob(jobId, btn) {
+    if (!confirm('Close this job? It will no longer appear to students.')) return;
+    btn.disabled=true;
+    try {
+      await jobs.close(jobId);
+      showBanner('Job closed.');
+      loadMyJobs();
+    } catch(e) { alert(e.message); btn.disabled=false; }
+  }
+
+  async function postJob() {
+    const btn = document.getElementById('post-btn');
+    const errEl = document.getElementById('post-err'); errEl.style.display='none';
+    const title=document.getElementById('post-title').value.trim();
+    const location=document.getElementById('post-location').value.trim();
+    const description=document.getElementById('post-desc').value.trim();
+    if (!title||!location||!description) { errEl.textContent='Please fill in Title, Location and Description.'; errEl.style.display='block'; return; }
+    btn.disabled=true; btn.textContent='Posting...';
+    try {
+      const reqs = document.getElementById('post-requirements').value.split(',').map(s=>s.trim()).filter(Boolean);
+      await jobs.post({ title, location, description, jobType: document.getElementById('post-type').value, salary: document.getElementById('post-salary').value, requirements: reqs });
+      ['post-title','post-location','post-desc','post-salary','post-requirements'].forEach(id=>document.getElementById(id).value='');
+      showBanner('Job posted successfully!');
+      showPage('myjobs', document.querySelector('.sidebar-item'));
+    } catch(e) { errEl.textContent=e.message; errEl.style.display='block'; }
+    finally { btn.disabled=false; btn.textContent='Post Job'; }
+  }
+
+  loadMyJobs();
+</script>
+</body>
+</html>
