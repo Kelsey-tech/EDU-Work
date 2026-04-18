@@ -1,0 +1,106 @@
+body{
+margin:0;
+font-family:'DM Sans',sans-serif;
+background:#FAFAFA;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:white;
+border-bottom:1px solid #E8E8E8;
+}
+
+.logo{
+font-weight:700;
+font-size:18px;
+}
+
+.nav-links a{
+margin:0 15px;
+text-decoration:none;
+color:#6C47FF;
+font-weight:500;
+}
+
+.login-container{
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:90vh;
+padding:40px 20px;
+}
+
+.login-box{
+background:white;
+padding:40px;
+border-radius:8px;
+border:1px solid #E8E8E8;
+width:440px;
+box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+h1{
+font-family:'Syne',sans-serif;
+font-size:36px;
+margin-bottom:8px;
+}
+
+.subtitle{
+color:#666;
+margin-bottom:24px;
+}
+
+label{
+display:block;
+margin-bottom:5px;
+font-weight:500;
+font-size:14px;
+}
+
+input{
+width:100%;
+padding:11px 12px;
+margin-bottom:18px;
+border-radius:6px;
+border:1px solid #E8E8E8;
+font-size:14px;
+box-sizing:border-box;
+font-family:'DM Sans',sans-serif;
+}
+
+input:focus{
+outline:none;
+border:1px solid #6C47FF;
+}
+
+button{
+background:#6C47FF;
+color:white;
+border:none;
+padding:12px;
+border-radius:6px;
+font-weight:600;
+cursor:pointer;
+width:100%;
+font-family:'DM Sans',sans-serif;
+font-size:14px;
+}
+
+button:hover{
+background:#4F2FD4;
+}
+
+.signup-text{
+margin-top:20px;
+font-size:14px;
+text-align:center;
+}
+
+.signup-text a{
+color:#6C47FF;
+text-decoration:none;
+font-weight:500;
+}

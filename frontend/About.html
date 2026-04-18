@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About | EDU Work</title>
+<link rel="stylesheet" href="About.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+.hero-section{background:linear-gradient(135deg,#6C47FF 0%,#4F2FD4 100%);padding:80px 20px;text-align:center;color:white;}
+.hero-section h1{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;margin-bottom:16px;color:white;}
+.hero-section p{font-size:18px;opacity:0.85;max-width:580px;margin:0 auto;line-height:1.7;}
+.section{padding:80px 20px;max-width:1100px;margin:0 auto;}
+.section-label{font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#6C47FF;margin-bottom:12px;}
+.section-title{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#111;margin-bottom:16px;}
+.section-sub{font-size:16px;color:#666;max-width:560px;line-height:1.8;margin-bottom:48px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.two-col p{font-size:15px;color:#555;line-height:1.9;}
+.two-col p+p{margin-top:16px;}
+.highlight-box{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:16px;padding:32px;}
+.highlight-box h3{font-family:'Syne',sans-serif;font-size:20px;color:#5B21B6;margin-bottom:12px;}
+.highlight-box p{font-size:14px;color:#6B46C1;line-height:1.7;}
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.value-card{background:#fff;border:1px solid #E8E8E8;border-radius:16px;padding:32px 28px;}
+.value-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;}
+.value-card h3{font-size:17px;font-weight:700;color:#111;margin-bottom:10px;}
+.value-card p{font-size:14px;color:#666;line-height:1.7;}
+.team-section{background:#F9FAFB;padding:80px 20px;}
+.team-inner{max-width:1100px;margin:0 auto;text-align:center;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.team-card{background:#fff;border:1px solid #E8E8E8;border-radius:16px;padding:32px 24px;text-align:center;}
+.team-avatar{width:64px;height:64px;border-radius:50%;background:#EDE9FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#6C47FF;}
+.team-card h4{font-size:16px;font-weight:700;color:#111;margin-bottom:4px;}
+.team-card .role{font-size:13px;color:#6C47FF;font-weight:600;margin-bottom:8px;}
+.team-card p{font-size:13px;color:#888;line-height:1.6;}
+.stats-bar{background:#111;padding:60px 20px;}
+.stats-bar-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;}
+.stat-item .num{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;color:#fff;}
+.stat-item .lbl{font-size:13px;color:#888;margin-top:6px;}
+.cta-section{background:#6C47FF;padding:80px 20px;text-align:center;}
+.cta-section h2{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:white;margin-bottom:16px;}
+.cta-section p{color:rgba(255,255,255,0.8);font-size:16px;margin-bottom:32px;}
+.cta-section a{background:#fff;color:#6C47FF;padding:13px 32px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;}
+.cta-section a:hover{opacity:0.9;}
+@media(max-width:768px){
+  .two-col,.values-grid,.team-grid{grid-template-columns:1fr;}
+  .stats-bar-inner{grid-template-columns:1fr 1fr;}
+  .hero-section h1{font-size:32px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><a href="index.html" style="text-decoration:none;color:inherit;">EDU Work</a></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="About.html">About</a>
+    <a href="HowItWorks.html">How it Works</a>
+    <a href="Jobs.html">Jobs</a>
+  </div>
+  <div id="nav-btns" style="display:flex;align-items:center;gap:12px;">
+    <a href="Login.html" style="color:#6C47FF;font-weight:500;text-decoration:none;">Login</a>
+    <a href="Login.html" style="background:#6C47FF;color:white;padding:9px 18px;border-radius:6px;font-weight:600;text-decoration:none;font-size:14px;">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-section">
+  <h1>About EDU-WORK</h1>
+  <p>We're on a mission to close the gap between education and employment — starting with South Africa's students.</p>
+</div>
+
+<!-- MISSION & VISION -->
+<div class="section">
+  <div class="two-col">
+    <div>
+      <p class="section-label">Who We Are</p>
+      <h2 class="section-title">Built to bridge the gap between students and opportunity</h2>
+      <p>EDU-WORK was created because too many talented students struggle to find their first job — not because they lack skills, but because they lack access. At the same time, companies spend weeks trying to find the right entry-level talent.</p>
+      <p>We built a platform that solves both problems at once. Students get a clear, simple way to find internships and entry-level jobs. Companies get a direct line to motivated, qualified candidates — without the noise.</p>
+      <p>We started in Johannesburg and we're growing across South Africa.</p>
+    </div>
+    <div>
+      <div class="highlight-box" style="margin-bottom:20px;">
+        <h3>Our Mission</h3>
+        <p>To help every student in South Africa find meaningful work experience — and help companies find the talent that will shape their future.</p>
+      </div>
+      <div class="highlight-box" style="background:#EFF6FF;border-color:#BFDBFE;">
+        <h3 style="color:#1E40AF;">Our Vision</h3>
+        <p style="color:#2563EB;">To become the most trusted career platform for students and graduates across Africa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+    <div class="stat-item"><div class="num">10K+</div><div class="lbl">Students Registered</div></div>
+    <div class="stat-item"><div class="num">500+</div><div class="lbl">Companies Hiring</div></div>
+    <div class="stat-item"><div class="num">3K+</div><div class="lbl">Successful Placements</div></div>
+    <div class="stat-item"><div class="num">92%</div><div class="lbl">Match Accuracy</div></div>
+  </div>
+</div>
+
+<!-- VALUES -->
+<div class="section" style="text-align:center;">
+  <p class="section-label">What Drives Us</p>
+  <h2 class="section-title">Our values</h2>
+  <div class="values-grid">
+    <div class="value-card">
+      <div class="value-icon" style="background:#EDE9FF;">🎯</div>
+      <h3>Access for All</h3>
+      <p>Every student deserves a fair shot at their first opportunity, regardless of where they studied or who they know.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon" style="background:#DBEAFE;">⚡</div>
+      <h3>Speed & Simplicity</h3>
+      <p>We remove the friction. Students apply in minutes. Companies post jobs in under two minutes. No unnecessary steps.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon" style="background:#F0FFF4;">🤝</div>
+      <h3>Real Connections</h3>
+      <p>We focus on genuine matches between students and companies — not just filling a form, but starting a career.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon" style="background:#FEF3C7;">🔒</div>
+      <h3>Trust & Transparency</h3>
+      <p>Students always know the status of their applications. Companies always know who's applying. No black holes.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon" style="background:#FFF1F2;">🌍</div>
+      <h3>Built for Africa</h3>
+      <p>We're not copying a Silicon Valley template. EDU-WORK is designed specifically for the South African job market.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon" style="background:#F5F3FF;">📈</div>
+      <h3>Student First</h3>
+      <p>Every product decision starts with one question: does this make it easier for a student to get hired?</p>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM -->
+<div class="team-section">
+  <div class="team-inner">
+    <p class="section-label">The Team</p>
+    <h2 class="section-title">Built by students, for students</h2>
+    <p style="color:#666;font-size:16px;max-width:520px;margin:0 auto;">EDU-WORK was created by a team of developers passionate about solving real problems in the South African job market.</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">B</div>
+        <h4>Baatile Magopa</h4>
+        <p class="role">Backend Developer</p>
+        <p>Built the API, database architecture, and authentication system powering the platform.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">K</div>
+        <h4>Kelsey-tech</h4>
+        <p class="role">Frontend Lead</p>
+        <p>Designed and built the user interface, dashboards, and the overall product experience.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">EW</div>
+        <h4>EDU-Work Team</h4>
+        <p class="role">Full Stack</p>
+        <p>A collaborative team working together to connect students and companies across South Africa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Join EDU-WORK today</h2>
+  <p>Free for students. Simple for companies. Built for South Africa.</p>
+  <a href="Login.html">Create Your Free Account</a>
+</div>
+
+<script src="api.js"></script>
+<script>
+  const _u = getUser();
+  if (_u) {
+    let dash = _u.role==='student'?'StudentDashboard.html':_u.role==='company'?'CompanyDashboard.html':'AdminDashboard.html';
+    document.getElementById('nav-btns').innerHTML = `<a href="${dash}" style="border:1px solid #6C47FF;color:#6C47FF;padding:8px 16px;border-radius:6px;font-weight:600;text-decoration:none;font-size:14px;">Dashboard</a><button onclick="logout()" style="background:#6C47FF;color:white;border:none;padding:9px 18px;border-radius:6px;font-weight:600;cursor:pointer;font-size:14px;">Logout</button>`;
+  }
+</script>
+</body>
+</html>
