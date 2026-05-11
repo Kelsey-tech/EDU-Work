@@ -1,5 +1,5 @@
 // ─── EDU-Work API Client ──────────────────────────────────────────────────────
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'https://eduwork-backend.vercel.app/api';
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
 function saveAuth(token, user) {
